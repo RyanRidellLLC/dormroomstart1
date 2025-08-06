@@ -1,12 +1,48 @@
-// Enhanced App.jsx with background image and expandable startup cards
+// Enhanced App.jsx with background image, expandable cards, and CTA tabs
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
-  Search, ChevronDown, ArrowRight, Users, DollarSign,
-  Linkedin, Mail, ChevronRight, Zap, Target
+  Search, ArrowRight, Users, DollarSign, Zap, Target
 } from 'lucide-react';
 
-const startups = [ /* your original startup list */ ];
+const startups = [
+  {
+    id: 1,
+    title: 'Placeholder Startup',
+    stage: 'ideas',
+    summary: 'This is a startup in idea stage.',
+    founder: 'Jane Doe',
+    university: 'Harvard',
+    avatar: 'https://via.placeholder.com/100',
+    product: 'A groundbreaking new idea.',
+    pitch: 'Making the world better from a dorm room.',
+    contact: { email: 'jane@example.com' }
+  },
+  {
+    id: 2,
+    title: 'Revenue Runners',
+    stage: 'revenue',
+    summary: 'Already generating solid revenue.',
+    founder: 'John Smith',
+    university: 'MIT',
+    avatar: 'https://via.placeholder.com/100',
+    product: 'An app that manages student finances.',
+    pitch: 'Empowering students with tools they need.',
+    contact: { email: 'john@example.com' }
+  },
+  {
+    id: 3,
+    title: 'Backed & Bold',
+    stage: 'backed',
+    summary: 'Investor-backed and scaling fast.',
+    founder: 'Ella Startup',
+    university: 'Stanford',
+    avatar: 'https://via.placeholder.com/100',
+    product: 'Eco-friendly logistics software.',
+    pitch: 'Reducing campus emissions with tech.',
+    contact: { email: 'ella@example.com' }
+  }
+];
 
 export default function App() {
   const [selectedStartupId, setSelectedStartupId] = useState(null);
@@ -21,16 +57,13 @@ export default function App() {
   const stages = [
     { key: 'ideas', label: '🧠 Business Ideas' },
     { key: 'revenue', label: '📈 Revenue Made' },
-    { key: 'backed', label: '🚀 Investor Backed' },
+    { key: 'backed', label: '🚀 Investor Backed' }
   ];
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 font-sans">
-      {/* HERO SECTION with City Background */}
-      <section
-        id="landing"
-        className="relative min-h-screen flex flex-col justify-center items-center text-center px-6 text-white"
-      >
+      {/* Hero Section with City Background */}
+      <section id="landing" className="relative min-h-screen flex flex-col justify-center items-center text-center px-6 text-white">
         <img
           src="https://images.pexels.com/photos/466685/pexels-photo-466685.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080&fit=crop"
           alt="City Skyline"
@@ -53,14 +86,13 @@ export default function App() {
         </div>
       </section>
 
-      {/* DISCOVER SECTION */}
+      {/* Discover Section */}
       <section id="discover" className="py-20 px-6 max-w-7xl mx-auto">
         <h2 className="text-4xl font-bold text-center mb-4">Discover Dorm Room Startups</h2>
         <p className="text-center text-lg text-slate-600 mb-12 max-w-3xl mx-auto">
           Browse projects making waves across campuses — and support the next generation of changemakers.
         </p>
 
-        {/* Search */}
         <div className="flex justify-center mb-12">
           <div className="relative w-full max-w-xl">
             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400" />
@@ -73,7 +105,6 @@ export default function App() {
           </div>
         </div>
 
-        {/* Stage Sections */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
           {stages.map(({ key, label }) => (
             <div key={key}>
@@ -108,6 +139,26 @@ export default function App() {
               </div>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* Founder & Investor CTA Tabs */}
+      <section className="py-20 px-6 max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10">
+        <div className="bg-gradient-to-br from-emerald-600 to-teal-600 p-10 rounded-3xl text-white shadow-xl">
+          <Zap className="w-10 h-10 mb-4" />
+          <h4 className="text-2xl font-bold mb-2">Founders: Start Here</h4>
+          <p className="mb-6">Submit your startup idea and connect with investors worldwide.</p>
+          <button className="w-full py-3 bg-white text-emerald-700 rounded-full font-semibold hover:bg-slate-100 transition flex items-center justify-center gap-2">
+            Submit Your Startup <ArrowRight className="w-4 h-4" />
+          </button>
+        </div>
+        <div className="bg-gradient-to-br from-slate-700 to-slate-900 p-10 rounded-3xl text-white shadow-xl">
+          <Target className="w-10 h-10 mb-4" />
+          <h4 className="text-2xl font-bold mb-2">Investors: Start Here</h4>
+          <p className="mb-6">Discover curated startup opportunities across all stages.</p>
+          <button className="w-full py-3 bg-white text-slate-700 rounded-full font-semibold hover:bg-slate-100 transition flex items-center justify-center gap-2">
+            Explore Startups <ArrowRight className="w-4 h-4" />
+          </button>
         </div>
       </section>
 
