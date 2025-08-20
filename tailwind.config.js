@@ -1,4 +1,13 @@
 module.exports = {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}"
+  ],
+  theme: {
+    // ...your theme config
+  },
+  plugins: [],
+}
   // ...your content settings
   theme: {
     extend: {
