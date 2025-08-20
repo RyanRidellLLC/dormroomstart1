@@ -1,23 +1,21 @@
-// Add this or update your colors section in your Tailwind config
 module.exports = {
+  // ...your content settings
   theme: {
     extend: {
       colors: {
         navy: {
-          100: "#e5eaf4",
-          200: "#c5cfe8",
-          300: "#a4b4db",
-          400: "#7087c7",
-          500: "#223262",
-          600: "#19264c",
-          700: "#14213d",
-        },
+          300: "#7C91A7",
+          400: "#597393",
+          500: "#395375",
+          600: "#243B5A",
+          700: "#152940",
+          800: "#0D1928",
+          900: "#05101A"
+        }
       },
       backgroundImage: {
-        "navy-gradient":
-          "linear-gradient(135deg, #14213d 0%, #223262 60%, #7087c7 100%)",
-      },
-    },
-  },
-  // ...rest of your config
+        "navy-gradient": "linear-gradient(to bottom right, #05101A, #243B5A, #7C91A7)"
+      }
+    }
+  }
 };
