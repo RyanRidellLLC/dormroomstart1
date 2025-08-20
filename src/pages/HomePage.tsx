@@ -27,3 +27,4 @@ import { useNavigate } from "react-router-dom";
 </div>
 
 // ...rest of HomePage unchanged
+export default HomePage;
