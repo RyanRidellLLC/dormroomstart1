@@ -4,12 +4,6 @@ module.exports = {
     "./src/**/*.{js,ts,jsx,tsx}"
   ],
   theme: {
-    // ...your theme config
-  },
-  plugins: [],
-}
-  // ...your content settings
-  theme: {
     extend: {
       colors: {
         navy: {
@@ -26,5 +20,6 @@ module.exports = {
         "navy-gradient": "linear-gradient(to bottom right, #05101A, #243B5A, #7C91A7)"
       }
     }
-  }
-};
+  },
+  plugins: [],
+}
