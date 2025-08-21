@@ -1,643 +1,562 @@
-import React, { useEffect, useMemo, useState } from "react";
-import {
-  ArrowRight, Search, Users, DollarSign, ChevronDown, Play,
-  CheckCircle, ShieldCheck, Target, Rocket, Sparkles, Clock
-} from "lucide-react";
+import React, { useState, useEffect } from 'react';
+import { 
+  Rocket, 
+  TrendingUp, 
+  Users, 
+  Star, 
+  CheckCircle, 
+  ArrowRight, 
+  Play,
+  MapPin,
+  Calendar,
+  DollarSign,
+  Target,
+  Award,
+  Zap,
+  Globe,
+  BarChart3,
+  Shield
+} from 'lucide-react';
 
-/* ===========================
-   Types
-=========================== */
-type Traction = {
-  users?: number;
-  revenue?: number; // monthly revenue in USD
-  mrr?: number;
-  campuses?: number;
-  waitlist?: number;
-  retention?: string;
-};
-type Startup = {
-  id: number;
-  title: string;
-  stage: "ideas" | "revenue" | "backed";
-  summary: string;
-  founder: string;
-  university: string;
-  avatar: string;
-  product: string;
-  pitch: string;
-  contact: { email: string; linkedin?: string };
-  traction?: Traction;
-  video?: string;
-};
+function App() {
+  const [activeTab, setActiveTab] = useState('startups');
+  const [currentDrop, setCurrentDrop] = useState(0);
 
-/* ===========================
-   Sample Data (replace anytime)
-=========================== */
-const STARTUPS: Startup[] = [
-  {
-    id: 1,
-    title: "Campus Cupboard",
-    stage: "ideas",
-    summary: "Dorm-based food-sharing network to eliminate waste.",
-    founder: "Sophie L.",
-    university: "Stanford",
-    avatar: "https://images.pexels.com/photos/3763152/pexels-photo-3763152.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
-    product: "Mobile app for students to share excess food across dorms.",
-    pitch: "Eliminating campus food waste by connecting those who have extra with those who need it—fast, safe, and local.",
-    contact: { email: "sophie@campuscupboard.com" },
-    traction: { users: 150, waitlist: 300 },
-    video: "https://www.w3schools.com/html/mov_bbb.mp4",
-  },
-  {
-    id: 2,
-    title: "NoteFlow",
-    stage: "revenue",
-    summary: "AI-generated class notes & summaries for students.",
-    founder: "Jamal K.",
-    university: "MIT",
-    avatar: "https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
-    product: "AI platform that turns lectures, slides, and PDFs into perfect study notes.",
-    pitch: "Learn faster with AI that extracts what matters most—built for speed and accuracy.",
-    contact: { email: "jamal@noteflow.ai" },
-    traction: { users: 2400, revenue: 15000, mrr: 5000 },
-    video: "https://www.w3schools.com/html/mov_bbb.mp4",
-  },
-  {
-    id: 3,
-    title: "DormRunner",
-    stage: "backed",
-    summary: "Student-run package & laundry delivery network.",
-    founder: "Emma T.",
-    university: "Harvard",
-    avatar: "https://images.pexels.com/photos/3792581/pexels-photo-3792581.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
-    product: "On-demand campus delivery: laundry, packages, errands—by students, for students.",
-    pitch: "3 campuses, $8.5k MRR, expanding fast with a proven unit model.",
-    contact: { email: "emma@dormrunner.com" },
-    traction: { users: 1200, revenue: 25000, mrr: 8500, campuses: 3 },
-    video: "https://www.w3schools.com/html/mov_bbb.mp4",
-  },
-  // Extra placeholders so the page feels full
-  {
-    id: 4,
-    title: "StudySync",
-    stage: "ideas",
-    summary: "Virtual study groups with AI matching.",
-    founder: "Alex R.",
-    university: "UC Berkeley",
-    avatar: "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
-    product: "AI matches students by goals/time zones for collaborative sessions.",
-    pitch: "Bring the best people together to learn, faster.",
-    contact: { email: "alex@studysync.co" },
-    traction: { users: 50, waitlist: 300 },
-    video: "https://www.w3schools.com/html/mov_bbb.mp4",
-  },
-  {
-    id: 5,
-    title: "EcoTrack",
-    stage: "revenue",
-    summary: "Carbon footprint tracking for universities.",
-    founder: "Maria S.",
-    university: "Stanford",
-    avatar: "https://images.pexels.com/photos/3763152/pexels-photo-3763152.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
-    product: "IoT + analytics suite that tracks energy, waste, and emissions.",
-    pitch: "Cut campus carbon by 40% with continuous monitoring and nudges.",
-    contact: { email: "maria@ecotrack.io" },
-    traction: { users: 800, revenue: 45000 },
-    video: "https://www.w3schools.com/html/mov_bbb.mp4",
-  },
-  {
-    id: 6,
-    title: "FinanceFlow",
-    stage: "backed",
-    summary: "Student budgeting and financial literacy app.",
-    founder: "David L.",
-    university: "Wharton",
-    avatar: "https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
-    product: "Budgeting, investing, and money education built for students.",
-    pitch: "10k+ students onboarded, 85% retention, strong referrals.",
-    contact: { email: "david@financeflow.app" },
-    traction: { users: 10000, revenue: 120000, retention: "85%" },
-    video: "https://www.w3schools.com/html/mov_bbb.mp4",
-  },
-];
+  const monthlyDrops = [
+    {
+      month: "January 2025",
+      theme: "AI & Machine Learning",
+      startups: 12,
+      totalRaised: "$45M",
+      featured: ["TechFlow AI", "DataVision", "MLCore"]
+    },
+    {
+      month: "December 2024", 
+      theme: "Sustainable Tech",
+      startups: 15,
+      totalRaised: "$62M",
+      featured: ["GreenEnergy+", "EcoTech", "SolarSync"]
+    }
+  ];
 
-/* ===========================
-   Page
-=========================== */
-export default function App(): JSX.Element {
-  // Search / filter / UI
-  const [search, setSearch] = useState("");
-  const [university, setUniversity] = useState("All");
-  const [hoveredId, setHoveredId] = useState<number | null>(null);
-  const [openId, setOpenId] = useState<number | null>(null);
+  const featuredStartups = [
+    {
+      name: "TechFlow AI",
+      industry: "Artificial Intelligence",
+      revenue: "$2.4M ARR",
+      growth: "+340%",
+      funding: "Series A Ready",
+      location: "San Francisco, CA",
+      compatibility: 94,
+      image: "https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=400"
+    },
+    {
+      name: "EcoVantage",
+      industry: "Clean Technology",
+      revenue: "$890K ARR",
+      growth: "+225%", 
+      funding: "Seed Extension",
+      location: "Austin, TX",
+      compatibility: 87,
+      image: "https://images.pexels.com/photos/3184311/pexels-photo-3184311.jpeg?auto=compress&cs=tinysrgb&w=400"
+    },
+    {
+      name: "FinanceCore",
+      industry: "Fintech",
+      revenue: "$5.2M ARR",
+      growth: "+180%",
+      funding: "Series B Ready", 
+      location: "New York, NY",
+      compatibility: 91,
+      image: "https://images.pexels.com/photos/3184297/pexels-photo-3184297.jpeg?auto=compress&cs=tinysrgb&w=400"
+    }
+  ];
 
-  // Modals
-  const [showFounder, setShowFounder] = useState(false);
-  const [showInvestor, setShowInvestor] = useState(false);
+  const investorProfiles = [
+    {
+      name: "Sarah Chen",
+      firm: "Venture Peak Capital",
+      checkSize: "$500K - $5M",
+      focus: "AI/ML, Enterprise SaaS",
+      portfolio: 45,
+      location: "Palo Alto, CA",
+      compatibility: 96,
+      image: "https://images.pexels.com/photos/3184339/pexels-photo-3184339.jpeg?auto=compress&cs=tinysrgb&w=400"
+    },
+    {
+      name: "Marcus Rodriguez",
+      firm: "Impact Ventures",
+      checkSize: "$250K - $2M", 
+      focus: "Climate, Healthcare",
+      portfolio: 32,
+      location: "Austin, TX",
+      compatibility: 89,
+      image: "https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg?auto=compress&cs=tinysrgb&w=400"
+    },
+    {
+      name: "Elena Popov",
+      firm: "TechForward Fund",
+      checkSize: "$1M - $10M",
+      focus: "Fintech, B2B SaaS",
+      portfolio: 28,
+      location: "New York, NY", 
+      compatibility: 93,
+      image: "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=400"
+    }
+  ];
 
-  // “Monthly Drop” countdown → next month’s 1st, 5:00 PM
-  const [countdown, setCountdown] = useState("Loading…");
   useEffect(() => {
-    const target = (() => {
-      const now = new Date();
-      const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1, 17, 0, 0);
-      return nextMonth;
-    })();
-    const tick = () => {
-      const now = new Date().getTime();
-      const diff = target.getTime() - now;
-      if (diff <= 0) return setCountdown("Live now!");
-      const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
-      const m = Math.floor((diff / (1000 * 60)) % 60);
-      const s = Math.floor((diff / 1000) % 60);
-      setCountdown(`${d}d ${h}h ${m}m ${s}s`);
-    };
-    tick();
-    const id = setInterval(tick, 1000);
-    return () => clearInterval(id);
-  }, []);
-
-  // Derived lists
-  const universityOptions = useMemo(() => {
-    const set = new Set(STARTUPS.map((s) => s.university));
-    return ["All", ...Array.from(set).sort()];
-  }, []);
-  const filtered = (stage: Startup["stage"]) =>
-    STARTUPS.filter((s) => {
-      const matchesStage = s.stage === stage;
-      const matchesUni = university === "All" || s.university === university;
-      const q = search.toLowerCase();
-      const matchesSearch =
-        s.title.toLowerCase().includes(q) ||
-        s.summary.toLowerCase().includes(q) ||
-        s.product.toLowerCase().includes(q) ||
-        s.pitch.toLowerCase().includes(q);
-      return matchesStage && matchesUni && matchesSearch;
-    });
+    const interval = setInterval(() => {
+      setCurrentDrop((prev) => (prev + 1) % monthlyDrops.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [monthlyDrops.length]);
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800">
-      {/* ================= HERO ================= */}
-      <section className="relative min-h-[72vh] flex items-center justify-center text-center">
-        {/* City background */}
-        <img
-          src="https://images.pexels.com/photos/466685/pexels-photo-466685.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080&fit=crop"
-          alt="City Skyline"
-          className="absolute inset-0 w-full h-full object-cover -z-10"
+    <div className="min-h-screen bg-slate-900">
+      {/* Hero Section */}
+      <div className="relative min-h-screen overflow-hidden">
+        {/* City Background */}
+        <div 
+          className="absolute inset-0 opacity-30"
+          style={{
+            backgroundImage: "url('https://images.pexels.com/photos/374870/pexels-photo-374870.jpeg?auto=compress&cs=tinysrgb&w=1600')",
+            backgroundSize: 'cover',
+            backgroundPosition: 'center bottom',
+            backgroundAttachment: 'fixed'
+          }}
         />
-        <div className="absolute inset-0 bg-slate-900/70 -z-10" />
-        <div className="max-w-4xl px-6">
-          <h1 className="text-white text-5xl md:text-7xl font-extrabold leading-tight">
-            Where <span className="text-navy-400">Founders</span> meet <span className="text-navy-400">Investors</span>
-          </h1>
-          <p className="mt-6 text-slate-200 text-xl">
-            A trusted, curated hub for dorm-room ideas, real traction, and investor-backed launches.
-          </p>
-
-          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button
-              onClick={() => setShowFounder(true)}
-              className="px-8 py-3 rounded-full bg-navy-500 text-white font-semibold hover:bg-navy-600 transition shadow"
-            >
-              Post Your Startup
-            </button>
-            <button
-              onClick={() => setShowInvestor(true)}
-              className="px-8 py-3 rounded-full bg-white text-navy-600 font-semibold hover:bg-slate-100 transition shadow flex items-center gap-2"
-            >
-              Become an Investor <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-
-          <button
-            onClick={() =>
-              document.getElementById("discover")?.scrollIntoView({ behavior: "smooth" })
-            }
-            className="mt-10 inline-flex items-center gap-2 text-slate-200 hover:text-white transition"
-          >
-            Learn more <ChevronDown className="w-5 h-5" />
-          </button>
-        </div>
-      </section>
-
-      {/* ================= DISCOVER ================= */}
-      <section id="discover" className="py-16 px-6 max-w-7xl mx-auto">
-        <div className="text-center mb-10">
-          <h2 className="text-4xl font-bold">Discover Startups</h2>
-          <p className="text-slate-600 mt-2">
-            Browse by stage: <span className="font-semibold">Business Plan</span> (ideas),{" "}
-            <span className="font-semibold">Revenue</span>, and{" "}
-            <span className="font-semibold">Investor-Backed</span>.
-          </p>
-        </div>
-
-        {/* Search + filters */}
-        <div className="flex flex-col md:flex-row gap-4 items-center justify-center mb-10">
-          <div className="relative w-full max-w-xl">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search startups, products, or summaries…"
-              className="w-full pl-12 pr-4 py-3 rounded-full border border-slate-300 focus:ring-2 focus:ring-navy-500 shadow-sm"
-            />
-          </div>
-          <select
-            value={university}
-            onChange={(e) => setUniversity(e.target.value)}
-            className="rounded-full border border-slate-300 px-4 py-3 shadow-sm"
-          >
-            {universityOptions.map((u) => (
-              <option key={u}>{u}</option>
-            ))}
-          </select>
-        </div>
-
-        {/* Columns by stage */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <StageColumn
-            title="🧠 Business Plan"
-            items={filtered("ideas")}
-            hoveredId={hoveredId}
-            openId={openId}
-            setHoveredId={setHoveredId}
-            setOpenId={setOpenId}
-          />
-          <StageColumn
-            title="📈 Revenue Made"
-            items={filtered("revenue")}
-            hoveredId={hoveredId}
-            openId={openId}
-            setHoveredId={setHoveredId}
-            setOpenId={setOpenId}
-          />
-          <StageColumn
-            title="🚀 Investor-Backed"
-            items={filtered("backed")}
-            hoveredId={hoveredId}
-            openId={openId}
-            setHoveredId={setHoveredId}
-            setOpenId={setOpenId}
-          />
-        </div>
-      </section>
-
-      {/* ================= MONTHLY DROP ================= */}
-      <section className="py-16 bg-slate-100 px-6">
-        <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-          <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white text-navy-600 font-semibold shadow">
-              <Sparkles className="w-4 h-4" /> Monthly Drop
+        
+        {/* Gradient Overlays */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/90 via-slate-900/95 to-cyan-900/90" />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent" />
+        
+        {/* Navigation */}
+        <nav className="relative z-10 flex items-center justify-between p-6 lg:px-12">
+          <div className="flex items-center space-x-2">
+            <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-cyan-400 rounded-xl flex items-center justify-center">
+              <Zap className="w-6 h-6 text-white" />
             </div>
-            <h3 className="mt-4 text-3xl font-bold">Top 10 Campus Ventures</h3>
-            <p className="mt-2 text-slate-600">
-              Curated by traction, team quality, and clarity of vision. Goes live the first day of each month.
+            <span className="text-2xl font-bold text-white">VentureSync</span>
+          </div>
+          <div className="hidden md:flex items-center space-x-8">
+            <a href="#" className="text-slate-300 hover:text-white transition-colors">How it Works</a>
+            <a href="#" className="text-slate-300 hover:text-white transition-colors">Success Stories</a>
+            <a href="#" className="text-slate-300 hover:text-white transition-colors">Resources</a>
+            <button className="bg-white/10 backdrop-blur-sm text-white px-4 py-2 rounded-lg hover:bg-white/20 transition-all duration-300">
+              Sign In
+            </button>
+          </div>
+        </nav>
+
+        {/* Hero Content */}
+        <div className="relative z-10 flex flex-col items-center justify-center min-h-[80vh] px-6 text-center">
+          <div className="max-w-4xl mx-auto">
+            <h1 className="text-5xl lg:text-7xl font-bold text-white mb-6 leading-tight">
+              Where <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">Startups</span> Meet
+              <br />Perfect <span className="bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">Investors</span>
+            </h1>
+            <p className="text-xl lg:text-2xl text-slate-300 mb-12 max-w-3xl mx-auto leading-relaxed">
+              AI-powered matching platform connecting high-growth startups with strategic investors. 
+              Join our exclusive monthly drops and discover your perfect match.
             </p>
-            <div className="mt-6 flex items-center gap-3 text-navy-600">
-              <Clock className="w-5 h-5" />
-              <span className="text-xl font-bold">{countdown}</span>
+            
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6 mb-16">
+              <button className="group w-full sm:w-auto bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white px-8 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl flex items-center justify-center space-x-2">
+                <Rocket className="w-5 h-5" />
+                <span>I'm a Startup</span>
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </button>
+              <button className="group w-full sm:w-auto bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white px-8 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl flex items-center justify-center space-x-2">
+                <TrendingUp className="w-5 h-5" />
+                <span>I'm an Investor</span>
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </button>
             </div>
-            <button className="mt-6 px-6 py-3 rounded-full bg-navy-500 text-white font-semibold hover:bg-navy-600 transition shadow">
-              Get Notified
-            </button>
-          </div>
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-            <h4 className="font-semibold text-slate-800 flex items-center gap-2">
-              <ShieldCheck className="w-5 h-5 text-navy-500" /> What we look for
-            </h4>
-            <ul className="mt-4 space-y-2 text-slate-700">
-              <li className="flex items-start gap-2"><CheckCircle className="w-5 h-5 text-navy-500" /> Clear user pain + insight</li>
-              <li className="flex items-start gap-2"><CheckCircle className="w-5 h-5 text-navy-500" /> Evidence of velocity (shipping updates or early metrics)</li>
-              <li className="flex items-start gap-2"><CheckCircle className="w-5 h-5 text-navy-500" /> Focused GTM and realistic ask</li>
-            </ul>
-          </div>
-        </div>
-      </section>
 
-      {/* ================= HOW IT WORKS ================= */}
-      <section className="py-16 px-6 max-w-7xl mx-auto">
-        <h3 className="text-3xl font-bold text-center mb-10">How It Works</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <Step
-            icon={<Target className="w-6 h-6" />}
-            title="Founders apply"
-            text="Share your one-liner, problem, solution, traction, and a 60-sec video pitch."
-          />
-          <Step
-            icon={<Users className="w-6 h-6" />}
-            title="Investors browse"
-            text="Filter by stage, sector, school, and signals like revenue or retention."
-          />
-          <Step
-            icon={<Rocket className="w-6 h-6" />}
-            title="Warm intros"
-            text="We facilitate intros. Deals happen off-platform (SAFE/note/equity). Simple & safe."
-          />
-        </div>
-      </section>
-
-      {/* ================= CRITERIA (Competitive Edge) ================= */}
-      <section className="py-16 px-6 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm">
-            <h4 className="text-2xl font-bold mb-4">Founder Signup Criteria</h4>
-            <ul className="space-y-3 text-slate-700">
-              <Criteria text="Clear problem & target user" />
-              <Criteria text="Solution description (what you’re building)" />
-              <Criteria text="Stage: Business Plan / Revenue / Investor-Backed" />
-              <Criteria text="Key metrics (users, MRR, waitlist, pilots)" />
-              <Criteria text="Team: roles, time commitment" />
-              <Criteria text="60-second video pitch (optional but recommended)" />
-              <Criteria text="Ask: funding amount, intros, hiring" />
-            </ul>
-          </div>
-          <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm">
-            <h4 className="text-2xl font-bold mb-4">Investor Signup Criteria</h4>
-            <ul className="space-y-3 text-slate-700">
-              <Criteria text="Name & firm (if applicable)" />
-              <Criteria text="Check size range & preferred stage" />
-              <Criteria text="Sectors of interest" />
-              <Criteria text="Geography / campus preference" />
-              <Criteria text="Founder intro policy (what you respond to fast)" />
-              <Criteria text="Optional: past investments or portfolio link" />
-            </ul>
+            {/* Stats */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 max-w-4xl mx-auto">
+              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+                <div className="text-3xl font-bold text-white mb-2">2,500+</div>
+                <div className="text-slate-300">Active Startups</div>
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+                <div className="text-3xl font-bold text-white mb-2">1,200+</div>
+                <div className="text-slate-300">Verified Investors</div>
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+                <div className="text-3xl font-bold text-white mb-2">$2.1B+</div>
+                <div className="text-slate-300">Capital Raised</div>
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+                <div className="text-3xl font-bold text-white mb-2">94%</div>
+                <div className="text-slate-300">Match Success</div>
+              </div>
+            </div>
           </div>
         </div>
-        <p className="text-center text-slate-500 mt-6 text-sm">
-          *We are not a broker-dealer. We enable discovery and connection; deal terms and execution happen off-platform.
-        </p>
-      </section>
-
-      {/* ================= FOOTER ================= */}
-      <footer className="py-10 text-center text-slate-500 text-sm">
-        © {new Date().getFullYear()} DormVenture · <a className="hover:underline" href="#how-it-works">How It Works</a>
-      </footer>
-
-      {/* ================= MODALS ================= */}
-      {showFounder && (
-        <Modal onClose={() => setShowFounder(false)} title="Post Your Startup">
-          <p className="text-slate-600 mb-4">
-            Enter your details and we’ll review for the next Monthly Drop and investor discovery.
-          </p>
-          <FormGrid
-            fields={[
-              { label: "Startup Name", type: "text" },
-              { label: "Founder Name(s)", type: "text" },
-              { label: "University", type: "text" },
-              { label: "Email", type: "email" },
-              { label: "Stage", type: "select", options: ["Business Plan", "Revenue", "Investor-Backed"] },
-              { label: "One-line Pitch", type: "text", full: true },
-              { label: "Problem", type: "textarea", full: true },
-              { label: "Solution / Product", type: "textarea", full: true },
-              { label: "Key Metrics (users / MRR / pilots)", type: "text", full: true },
-              { label: "60-sec Video URL (optional)", type: "text", full: true },
-              { label: "What you’re looking for", type: "text", full: true },
-            ]}
-            submitText="Submit for Review"
-          />
-        </Modal>
-      )}
-
-      {showInvestor && (
-        <Modal onClose={() => setShowInvestor(false)} title="Become an Investor">
-          <p className="text-slate-600 mb-4">
-            Tell us what you’re looking for so we can route the best founders to you.
-          </p>
-          <FormGrid
-            fields={[
-              { label: "Your Name", type: "text" },
-              { label: "Email", type: "email" },
-              { label: "Firm (optional)", type: "text" },
-              { label: "Check Size", type: "select", options: ["$10k–$50k", "$50k–$250k", "$250k–$1M", "$1M+"] },
-              { label: "Preferred Stage", type: "select", options: ["Business Plan", "Revenue", "Investor-Backed"] },
-              { label: "Sectors", type: "text", full: true },
-              { label: "Geography / campus preference", type: "text", full: true },
-              { label: "Intro policy (what you reply to fast)", type: "textarea", full: true },
-              { label: "Portfolio link (optional)", type: "text", full: true },
-            ]}
-            submitText="Create Investor Profile"
-          />
-        </Modal>
-      )}
-    </div>
-  );
-}
-
-/* ===========================
-   Components
-=========================== */
-
-function StageColumn({
-  title,
-  items,
-  hoveredId,
-  openId,
-  setHoveredId,
-  setOpenId,
-}: {
-  title: string;
-  items: Startup[];
-  hoveredId: number | null;
-  openId: number | null;
-  setHoveredId: (id: number | null) => void;
-  setOpenId: (id: number | null) => void;
-}) {
-  return (
-    <div>
-      <div className="flex items-center gap-3 mb-4">
-        <div className="w-12 h-12 rounded-2xl bg-navy-500/10 flex items-center justify-center">
-          <Play className="w-5 h-5 text-navy-600" />
-        </div>
-        <h4 className="text-xl font-semibold">{title}</h4>
       </div>
-      <div className="space-y-4">
-        {items.map((s) => {
-          const expanded = openId === s.id;
-          const hovered = hoveredId === s.id;
-          const revenueK = s.traction?.revenue ? Math.round(s.traction.revenue / 1000) : null;
 
-          return (
-            <div
-              key={s.id}
-              onMouseEnter={() => setHoveredId(s.id)}
-              onMouseLeave={() => setHoveredId(null)}
-              onClick={() => setOpenId(expanded ? null : s.id)}
-              className={`bg-white border border-slate-200 rounded-2xl p-4 shadow transition-all duration-300 cursor-pointer ${
-                expanded ? "scale-[1.02] shadow-lg" : "hover:scale-[1.01] hover:bg-slate-50"
-              }`}
-            >
-              <div className="flex items-center gap-4">
-                <img src={s.avatar} alt={s.founder} className="w-10 h-10 rounded-full object-cover" />
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <h5 className="font-bold text-slate-800">{s.title}</h5>
-                    {revenueK && (
-                      <span className="text-xs bg-navy-100 text-navy-700 px-2 py-0.5 rounded-full">
-                        ${revenueK}k/mo
-                      </span>
-                    )}
-                    {s.traction?.users && (
-                      <span className="text-xs bg-slate-100 text-slate-700 px-2 py-0.5 rounded-full flex items-center gap-1">
-                        <Users className="w-3 h-3" />
-                        {s.traction.users.toLocaleString()}
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-sm text-slate-500">{s.founder} · {s.university}</p>
+      {/* Monthly Drop Section */}
+      <section className="py-20 bg-gradient-to-br from-slate-800 to-slate-900">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">
+              Monthly <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">Drops</span>
+            </h2>
+            <p className="text-xl text-slate-300 max-w-3xl mx-auto">
+              Exclusive monthly showcases featuring hand-picked startups ready for investment. 
+              Each drop focuses on a specific industry with verified growth metrics.
+            </p>
+          </div>
+
+          <div className="bg-white/5 backdrop-blur-sm rounded-3xl p-8 border border-white/10">
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center space-x-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center">
+                  <Calendar className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold text-white">{monthlyDrops[currentDrop].month}</h3>
+                  <p className="text-slate-400">{monthlyDrops[currentDrop].theme}</p>
                 </div>
               </div>
-
-              <p className="mt-2 text-slate-700 text-sm line-clamp-2">{s.summary}</p>
-
-              {/* Hover Peek */}
-              {!expanded && (
-                <div className={`mt-2 transition-opacity ${hovered ? "opacity-100" : "opacity-0"}`}>
-                  <div className="text-xs bg-slate-100 border border-slate-200 rounded-xl px-3 py-2 text-slate-600">
-                    <span className="font-semibold">Peek:</span> {s.product.slice(0, 48)}
-                    {s.product.length > 48 ? "…" : ""} • {s.pitch.slice(0, 42)}
-                    {s.pitch.length > 42 ? "…" : ""}
-                  </div>
-                </div>
-              )}
-
-              {/* Expanded Detail */}
-              {expanded && (
-                <div className="mt-4 space-y-3 text-sm text-slate-700">
-                  {s.video && (
-                    <div>
-                      <p className="font-semibold mb-1">Video Pitch</p>
-                      <video controls className="w-full rounded-xl">
-                        <source src={s.video} type="video/mp4" />
-                      </video>
-                    </div>
-                  )}
-                  <p><strong>Product:</strong> {s.product}</p>
-                  <p><strong>Vision:</strong> {s.pitch}</p>
-                  <div className="flex items-center gap-3 text-slate-600 flex-wrap">
-                    {s.traction?.mrr && (
-                      <span className="inline-flex items-center gap-1 text-xs bg-navy-100 text-navy-700 px-2 py-1 rounded-full">
-                        <DollarSign className="w-3 h-3" /> MRR ${Math.round((s.traction.mrr || 0) / 1000)}k
-                      </span>
-                    )}
-                    {s.traction?.campuses && (
-                      <span className="inline-flex items-center gap-1 text-xs bg-slate-100 px-2 py-1 rounded-full">
-                        {s.traction.campuses} campuses
-                      </span>
-                    )}
-                    {s.traction?.waitlist && (
-                      <span className="inline-flex items-center gap-1 text-xs bg-slate-100 px-2 py-1 rounded-full">
-                        waitlist {s.traction.waitlist}
-                      </span>
-                    )}
-                  </div>
-                  <div className="flex items-center justify-between pt-2 border-t border-slate-200">
-                    <a
-                      href={`mailto:${s.contact.email}`}
-                      onClick={(e) => e.stopPropagation()}
-                      className="text-navy-600 font-semibold hover:underline"
-                    >
-                      Contact founder →
-                    </a>
-                    <span className="text-xs text-slate-500">Click card again to collapse</span>
-                  </div>
-                </div>
-              )}
+              <div className="text-right">
+                <div className="text-3xl font-bold text-white">{monthlyDrops[currentDrop].startups}</div>
+                <div className="text-slate-400">Selected Startups</div>
+              </div>
             </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
 
-function Step({ icon, title, text }: { icon: React.ReactNode; title: string; text: string }) {
-  return (
-    <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-      <div className="w-10 h-10 rounded-xl bg-navy-500/10 text-navy-600 flex items-center justify-center mb-4">
-        {icon}
-      </div>
-      <h5 className="font-semibold text-lg mb-1">{title}</h5>
-      <p className="text-slate-600">{text}</p>
-    </div>
-  );
-}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+              <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
+                <DollarSign className="w-8 h-8 text-green-400 mb-3" />
+                <div className="text-2xl font-bold text-white mb-2">{monthlyDrops[currentDrop].totalRaised}</div>
+                <div className="text-slate-400">Total Capital Raised</div>
+              </div>
+              <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
+                <Target className="w-8 h-8 text-blue-400 mb-3" />
+                <div className="text-2xl font-bold text-white mb-2">89%</div>
+                <div className="text-slate-400">Funding Success Rate</div>
+              </div>
+              <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
+                <Award className="w-8 h-8 text-orange-400 mb-3" />
+                <div className="text-2xl font-bold text-white mb-2">4.8/5</div>
+                <div className="text-slate-400">Investor Rating</div>
+              </div>
+            </div>
 
-function Criteria({ text }: { text: string }) {
-  return (
-    <li className="flex items-start gap-3">
-      <CheckCircle className="mt-0.5 w-5 h-5 text-navy-500" /> {text}
-    </li>
-  );
-}
-
-function Modal({
-  title,
-  children,
-  onClose,
-}: {
-  title: string;
-  children: React.ReactNode;
-  onClose: () => void;
-}) {
-  return (
-    <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-3xl max-w-3xl w-full p-6 shadow-2xl">
-        <div className="flex items-center justify-between">
-          <h4 className="text-2xl font-bold">{title}</h4>
-          <button
-            onClick={onClose}
-            className="text-slate-400 hover:text-slate-700 text-2xl leading-none"
-            aria-label="Close"
-          >
-            ×
-          </button>
-        </div>
-        <div className="mt-4">{children}</div>
-      </div>
-    </div>
-  );
-}
-
-function FormGrid({
-  fields,
-  submitText,
-}: {
-  fields: { label: string; type: "text" | "email" | "textarea" | "select"; full?: boolean; options?: string[] }[];
-  submitText: string;
-}) {
-  return (
-    <form className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      {fields.map((f, idx) => (
-        <div key={idx} className={f.full ? "md:col-span-2" : ""}>
-          <label className="block text-sm font-semibold text-slate-700 mb-1">{f.label}</label>
-          {f.type === "textarea" ? (
-            <textarea
-              rows={4}
-              className="w-full rounded-xl border-2 border-slate-300 px-3 py-2 focus:ring-2 focus:ring-navy-500"
-            />
-          ) : f.type === "select" ? (
-            <select className="w-full rounded-xl border-2 border-slate-300 px-3 py-2 focus:ring-2 focus:ring-navy-500">
-              {f.options?.map((o) => (
-                <option key={o}>{o}</option>
+            <div className="flex flex-wrap gap-2 mb-6">
+              <span className="text-slate-300">Featured Companies:</span>
+              {monthlyDrops[currentDrop].featured.map((company, index) => (
+                <span key={index} className="bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full text-sm">
+                  {company}
+                </span>
               ))}
-            </select>
-          ) : (
-            <input
-              type={f.type}
-              className="w-full rounded-xl border-2 border-slate-300 px-3 py-2 focus:ring-2 focus:ring-navy-500"
-            />
+            </div>
+
+            <button className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white py-4 rounded-2xl font-semibold transition-all duration-300 transform hover:scale-[1.02]">
+              View January 2025 Drop
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Profiles Section */}
+      <section className="py-20 bg-slate-900">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">
+              Meet Your Perfect <span className="bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">Match</span>
+            </h2>
+            <p className="text-xl text-slate-300 max-w-3xl mx-auto mb-8">
+              Our AI-powered compatibility system analyzes over 200 data points to connect 
+              startups with investors who truly understand their vision and market.
+            </p>
+            
+            <div className="flex justify-center mb-12">
+              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-2 border border-white/20">
+                <button
+                  onClick={() => setActiveTab('startups')}
+                  className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
+                    activeTab === 'startups' 
+                      ? 'bg-blue-600 text-white' 
+                      : 'text-slate-300 hover:text-white'
+                  }`}
+                >
+                  Featured Startups
+                </button>
+                <button
+                  onClick={() => setActiveTab('investors')}
+                  className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
+                    activeTab === 'investors' 
+                      ? 'bg-orange-600 text-white' 
+                      : 'text-slate-300 hover:text-white'
+                  }`}
+                >
+                  Top Investors
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Startup Profiles */}
+          {activeTab === 'startups' && (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {featuredStartups.map((startup, index) => (
+                <div key={index} className="group bg-white/5 backdrop-blur-sm rounded-3xl p-6 border border-white/10 hover:border-blue-500/50 transition-all duration-300 transform hover:scale-[1.02]">
+                  <div className="flex items-center space-x-4 mb-6">
+                    <img 
+                      src={startup.image} 
+                      alt={startup.name}
+                      className="w-14 h-14 rounded-2xl object-cover"
+                    />
+                    <div>
+                      <h3 className="text-xl font-bold text-white">{startup.name}</h3>
+                      <p className="text-slate-400">{startup.industry}</p>
+                    </div>
+                    <div className="ml-auto bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-sm font-semibold">
+                      {startup.compatibility}% Match
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4 mb-6">
+                    <div className="bg-white/5 rounded-2xl p-4">
+                      <div className="text-lg font-bold text-white mb-1">{startup.revenue}</div>
+                      <div className="text-slate-400 text-sm">Annual Revenue</div>
+                    </div>
+                    <div className="bg-white/5 rounded-2xl p-4">
+                      <div className="text-lg font-bold text-green-400 mb-1">{startup.growth}</div>
+                      <div className="text-slate-400 text-sm">YoY Growth</div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3 mb-6">
+                    <div className="flex items-center space-x-2">
+                      <Target className="w-4 h-4 text-blue-400" />
+                      <span className="text-slate-300">{startup.funding}</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <MapPin className="w-4 h-4 text-orange-400" />
+                      <span className="text-slate-300">{startup.location}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex space-x-3">
+                    <button className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-2xl font-semibold transition-colors">
+                      View Profile
+                    </button>
+                    <button className="bg-white/10 hover:bg-white/20 text-white p-3 rounded-2xl transition-colors">
+                      <Play className="w-5 h-5" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Investor Profiles */}
+          {activeTab === 'investors' && (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {investorProfiles.map((investor, index) => (
+                <div key={index} className="group bg-white/5 backdrop-blur-sm rounded-3xl p-6 border border-white/10 hover:border-orange-500/50 transition-all duration-300 transform hover:scale-[1.02]">
+                  <div className="flex items-center space-x-4 mb-6">
+                    <img 
+                      src={investor.image} 
+                      alt={investor.name}
+                      className="w-14 h-14 rounded-2xl object-cover"
+                    />
+                    <div>
+                      <h3 className="text-xl font-bold text-white">{investor.name}</h3>
+                      <p className="text-slate-400">{investor.firm}</p>
+                    </div>
+                    <div className="ml-auto bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-sm font-semibold">
+                      {investor.compatibility}% Match
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4 mb-6">
+                    <div className="bg-white/5 rounded-2xl p-4">
+                      <div className="text-lg font-bold text-white mb-1">{investor.checkSize}</div>
+                      <div className="text-slate-400 text-sm">Check Size</div>
+                    </div>
+                    <div className="bg-white/5 rounded-2xl p-4">
+                      <div className="text-lg font-bold text-orange-400 mb-1">{investor.portfolio}</div>
+                      <div className="text-slate-400 text-sm">Portfolio Cos</div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3 mb-6">
+                    <div className="flex items-center space-x-2">
+                      <Target className="w-4 h-4 text-blue-400" />
+                      <span className="text-slate-300">{investor.focus}</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <MapPin className="w-4 h-4 text-orange-400" />
+                      <span className="text-slate-300">{investor.location}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex space-x-3">
+                    <button className="flex-1 bg-orange-600 hover:bg-orange-700 text-white py-3 rounded-2xl font-semibold transition-colors">
+                      Connect
+                    </button>
+                    <button className="bg-white/10 hover:bg-white/20 text-white p-3 rounded-2xl transition-colors">
+                      <Shield className="w-5 h-5" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
         </div>
-      ))}
-      <div className="md:col-span-2">
-        <button
-          type="button"
-          className="w-full mt-2 rounded-2xl bg-navy-500 text-white font-semibold py-3 hover:bg-navy-600 transition shadow"
-        >
-          {submitText}
-        </button>
-      </div>
-    </form>
+      </section>
+
+      {/* How It Works */}
+      <section className="py-20 bg-gradient-to-br from-slate-800 to-slate-900">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">
+              How <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">VentureSync</span> Works
+            </h2>
+            <p className="text-xl text-slate-300 max-w-3xl mx-auto">
+              Our sophisticated matching algorithm considers compatibility across multiple dimensions
+              to ensure meaningful connections that lead to successful partnerships.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
+            <div className="text-center">
+              <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                <Users className="w-10 h-10 text-white" />
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-4">Smart Profiling</h3>
+              <p className="text-slate-300">
+                Complete comprehensive profiles with verified metrics, growth data, 
+                and strategic goals. Our AI analyzes 200+ compatibility factors.
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="w-20 h-20 bg-gradient-to-br from-orange-500 to-red-500 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                <Target className="w-10 h-10 text-white" />
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-4">AI Matching</h3>
+              <p className="text-slate-300">
+                Advanced algorithms match startups with investors based on industry focus, 
+                stage, check size, geography, and strategic alignment.
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="w-20 h-20 bg-gradient-to-br from-green-500 to-emerald-500 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                <CheckCircle className="w-10 h-10 text-white" />
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-4">Secure Connection</h3>
+              <p className="text-slate-300">
+                Verified introductions with built-in video pitching, document sharing, 
+                and progress tracking throughout the funding process.
+              </p>
+            </div>
+          </div>
+
+          {/* Signup Criteria Preview */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="bg-gradient-to-br from-blue-600/20 to-cyan-600/20 rounded-3xl p-8 border border-blue-500/20">
+              <h3 className="text-2xl font-bold text-white mb-6">Startup Requirements</h3>
+              <div className="space-y-4">
+                <div className="flex items-center space-x-3">
+                  <CheckCircle className="w-5 h-5 text-green-400" />
+                  <span className="text-slate-300">Minimum $50K ARR or clear revenue path</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <CheckCircle className="w-5 h-5 text-green-400" />
+                  <span className="text-slate-300">Comprehensive business plan & financial projections</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <CheckCircle className="w-5 h-5 text-green-400" />
+                  <span className="text-slate-300">Verified team credentials & experience</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <CheckCircle className="w-5 h-5 text-green-400" />
+                  <span className="text-slate-300">Market traction evidence (users, revenue, partnerships)</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <CheckCircle className="w-5 h-5 text-green-400" />
+                  <span className="text-slate-300">2-minute video pitch & demo</span>
+                </div>
+              </div>
+            </div>
+            <div className="bg-gradient-to-br from-orange-600/20 to-red-600/20 rounded-3xl p-8 border border-orange-500/20">
+              <h3 className="text-2xl font-bold text-white mb-6">Investor Requirements</h3>
+              <div className="space-y-4">
+                <div className="flex items-center space-x-3">
+                  <CheckCircle className="w-5 h-5 text-green-400" />
+                  <span className="text-slate-300">Minimum $25K check size capacity</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <CheckCircle className="w-5 h-5 text-green-400" />
+                  <span className="text-slate-300">Verified accreditation & investment history</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <CheckCircle className="w-5 h-5 text-green-400" />
+                  <span className="text-slate-300">Clear investment thesis & focus areas</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <CheckCircle className="w-5 h-5 text-green-400" />
+                  <span className="text-slate-300">Portfolio companies & success metrics</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <CheckCircle className="w-5 h-5 text-green-400" />
+                  <span className="text-slate-300">Value-add capabilities beyond capital</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer CTA */}
+      <section className="py-20 bg-gradient-to-br from-slate-900 to-black">
+        <div className="max-w-4xl mx-auto px-6 text-center">
+          <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">
+            Ready to Find Your Perfect Match?
+          </h2>
+          <p className="text-xl text-slate-300 mb-12 max-w-2xl mx-auto">
+            Join thousands of successful startups and investors who've found their 
+            ideal partnerships through VentureSync's intelligent matching platform.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6">
+            <button className="group w-full sm:w-auto bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white px-12 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl flex items-center justify-center space-x-2">
+              <Rocket className="w-5 h-5" />
+              <span>Start Your Journey</span>
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-black py-12">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="flex flex-col lg:flex-row items-center justify-between">
+            <div className="flex items-center space-x-2 mb-6 lg:mb-0">
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-cyan-400 rounded-xl flex items-center justify-center">
+                <Zap className="w-6 h-6 text-white" />
+              </div>
+              <span className="text-2xl font-bold text-white">VentureSync</span>
+            </div>
+            <div className="flex items-center space-x-8">
+              <a href="#" className="text-slate-400 hover:text-white transition-colors">Privacy</a>
+              <a href="#" className="text-slate-400 hover:text-white transition-colors">Terms</a>
+              <a href="#" className="text-slate-400 hover:text-white transition-colors">Contact</a>
+            </div>
+          </div>
+          <div className="border-t border-slate-800 mt-8 pt-8 text-center">
+            <p className="text-slate-400">© 2025 VentureSync. All rights reserved.</p>
+          </div>
+        </div>
+      </footer>
+    </div>
   );
 }
+
+export default App;
