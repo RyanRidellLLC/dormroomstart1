@@ -32,6 +32,12 @@ const InvestorSignup: React.FC = () => {
       return;
     }
 
+    if (!supabase) {
+      setError("Database not configured. Form submission disabled.");
+      setSubmitting(false);
+      return;
+    }
+
     const { error: dbError } = await supabase.from("investors").insert([
       {
         name: form.name,
