@@ -15,13 +15,16 @@ const criteriaInvestor = [
   "Proof of funds (optional)",
 ];
 
+// Unsplash: NYC skyline at dusk, high-res, license-friendly
+const CITY_SKYLINE_IMAGE =
+  "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1500&q=80";
+
 const HomePage: React.FC = () => {
   return (
     <div
       className="min-h-screen bg-cover bg-center flex flex-col"
       style={{
-        backgroundImage:
-          "url('https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=1500&q=80')",
+        backgroundImage: `url('${CITY_SKYLINE_IMAGE}')`,
       }}
     >
       {/* Navy overlay */}
