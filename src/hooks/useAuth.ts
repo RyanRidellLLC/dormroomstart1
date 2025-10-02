@@ -6,7 +6,7 @@ export const useAuth = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('startuconnect_user');
+    const storedUser = localStorage.getItem('venturesync_user');
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
@@ -15,19 +15,19 @@ export const useAuth = () => {
 
   const login = (userData: User) => {
     setUser(userData);
-    localStorage.setItem('startuconnect_user', JSON.stringify(userData));
+    localStorage.setItem('venturesync_user', JSON.stringify(userData));
   };
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('startuconnect_user');
+    localStorage.removeItem('venturesync_user');
   };
 
   const updateUser = (updatedData: Partial<User>) => {
     if (user) {
       const updatedUser = { ...user, ...updatedData };
       setUser(updatedUser);
-      localStorage.setItem('startuconnect_user', JSON.stringify(updatedUser));
+      localStorage.setItem('venturesync_user', JSON.stringify(updatedUser));
     }
   };
 

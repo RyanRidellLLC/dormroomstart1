@@ -157,7 +157,7 @@ const MainInterface: React.FC = () => {
                 <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl flex items-center justify-center">
                   <TrendingUp className="w-6 h-6 text-white" />
                 </div>
-                <span className="ml-3 text-xl font-bold text-gray-900">StartuConnect</span>
+                <span className="ml-3 text-xl font-bold text-gray-900">VentureSync</span>
               </div>
               
               <nav className="hidden md:flex space-x-8">
