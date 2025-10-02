@@ -106,7 +106,7 @@ const LoginForm: React.FC = () => {
               <TrendingUp className="w-9 h-9 text-white" />
             </div>
             <span className="ml-4 text-4xl font-bold text-white">
-              StartuConnect
+              VentureSync
             </span>
           </div>
 
